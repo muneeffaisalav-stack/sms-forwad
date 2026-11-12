@@ -139,6 +139,7 @@ class MainActivity : Activity() {
         }
 
         try {
+            val previousSelection = subscriptions.getOrNull(simSpinner.selectedItemPosition)?.subscriptionId
             val manager = getSystemService(SubscriptionManager::class.java)
             subscriptions = manager.activeSubscriptionInfoList.orEmpty()
             simLabels = when {
@@ -153,7 +154,8 @@ class MainActivity : Activity() {
 
             if (subscriptions.isNotEmpty()) {
                 val savedId = prefs.getInt(KsebSmsReceiver.KEY_SIM_SUBSCRIPTION_ID, -1)
-                val selectedIndex = subscriptions.indexOfFirst { it.subscriptionId == savedId }
+                val preferredId = previousSelection ?: savedId
+                val selectedIndex = subscriptions.indexOfFirst { it.subscriptionId == preferredId }
                     .takeIf { it >= 0 } ?: 0
                 simSpinner.setSelection(selectedIndex)
             }
